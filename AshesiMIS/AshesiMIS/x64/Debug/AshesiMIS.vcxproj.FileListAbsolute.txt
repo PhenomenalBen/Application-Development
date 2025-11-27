@@ -1,0 +1,9 @@
+C:\Users\ben.changdar\source\repos\AshesiMIS\x64\Debug\mysql.data.dll
+C:\Users\ben.changdar\source\repos\AshesiMIS\AshesiMIS\x64\Debug\AshesiMIS.vcxproj.AssemblyReference.cache
+C:\Users\ben.changdar\source\repos\AshesiMIS\AshesiMIS\x64\Debug\AshesiMIS.newFrmLogin.resources
+C:\Users\ben.changdar\source\repos\AshesiMIS\AshesiMIS\x64\Debug\AshesiMIS.vcxproj.GenerateResource.cache
+C:\Users\ben.changdar\source\repos\AshesiMIS\AshesiMIS\x64\Debug\AshesiMIS.vcxproj.Up2Date
+C:\Users\ben.changdar\source\repos\AshesiMIS\AshesiMIS\x64\Debug\AshesiMIS.frmMain.resources
+C:\Users\ben.changdar\source\repos\AshesiMIS\AshesiMIS\x64\Debug\AshesiMIS.frmDepartment.resources
+C:\Users\ben.changdar\source\repos\AshesiMIS\AshesiMIS\x64\Debug\AshesiMIS.frmCourses.resources
+C:\Users\ben.changdar\source\repos\AshesiMIS\AshesiMIS\x64\Debug\AshesiMIS.frmprogrammes.resources

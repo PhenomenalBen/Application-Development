@@ -1,0 +1,7 @@
+﻿  frmCourses.cpp
+  frmMain.cpp
+  frmprogrammes.cpp
+  mainProgram.cpp
+  Generating Code...
+  frmCourses.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
+  AshesiMIS.vcxproj -> C:\Users\ben.changdar\source\repos\AshesiMIS\x64\Debug\AshesiMIS.exe
