@@ -1,0 +1,174 @@
+  AshesiMIS.frmAddFaculty.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmAddUsers.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmCourses.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmDepartment.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmEnterGrade.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmGenerateReport.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmMain.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmprogrammes.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmRegisterCourse.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmRegisterFaculty.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmRegisterStudent.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.frmViewGrades.resources - Embedded, ContainedInManifestFile, 
+  AshesiMIS.newFrmLogin.resources - Embedded, ContainedInManifestFile, 
+ImageRuntimeVersion: v4.0.30319
+Assembly AshesiMIS, Version=0.0.*, Culture=Invariant Language (Invariant Country): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d: 
+	hash=None, flags=None
+Assembly System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a: 
+	hash=None, flags=None
+Assembly System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Class AshesiMIS.frmAddFaculty: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable sqlDT : Public
+    System.String ConnectionStr : Public
+    Int32 globalFacultyID : Public
+Class AshesiMIS.frmAddUsers: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable sqlDT : Public
+    System.String ConnectionStr : Public
+    Int32 globalUserID : Public
+Class User: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    Int32 id : Public
+    Int32 studentID : Public
+    Int32 facultyID : Public
+    System.String fName : Public
+    System.String lName : Public
+    System.String email : Public
+    System.String password : Public
+    Int32 roleNum : Public
+Class AshesiMIS.frmCourses: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable sqlDT : Public
+    System.String ConnectionStr : Public
+    Int32 globalCourseID : Public
+Class AshesiMIS.frmDepartment: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable sqlDT : Public
+    System.String ConnectionStr : Public
+    Int32 globalDeptID : Public
+    User user : Public
+Class AshesiMIS.frmEnterGrade: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable sqlDT : Public
+    System.String ConnectionStr : Public
+Class AshesiMIS.frmGenerateReport: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable sqlDT : Public
+    System.String ConnectionStr : Public
+Class AshesiMIS.frmprogrammes: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable sqlDT : Public
+    System.String ConnectionString : Public
+    Int32 currentProgrammeID : Public
+Class AshesiMIS.frmRegisterFaculty: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.String ConnectionStr : Public
+Class AshesiMIS.frmRegisterStudent: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable sqlDT : Public
+    System.String ConnectionStr : Public
+Class AshesiMIS.frmRegisterCourse: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(Int32): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable dtAvailable : Public
+    System.Data.DataTable dtSelected : Public
+    System.String ConnectionStr : Public
+    Int32 currentStudentID : Public
+    Int32 totalCredits : Public
+Class AshesiMIS.frmViewGrades: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(Int32): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable sqlDT : Public
+    System.String ConnectionStr : Public
+    Int32 currentStudentID : Public
+Class AshesiMIS.frmMain: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(User): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class AshesiMIS.newFrmLogin: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    MySql.Data.MySqlClient.MySqlConnection sqlConn : Public
+    MySql.Data.MySqlClient.MySqlCommand sqlCmd : Public
+    MySql.Data.MySqlClient.MySqlDataAdapter sqlDA : Public
+    MySql.Data.MySqlClient.MySqlDataReader sqlDR : Public
+    System.Data.DataTable sqlDT : Public
+    System.String ConnectionStr : Public
+    User user : Public
