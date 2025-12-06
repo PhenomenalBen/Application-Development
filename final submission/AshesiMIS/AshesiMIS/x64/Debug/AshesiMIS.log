@@ -1,0 +1,19 @@
+﻿  frmMain.cpp
+C:\Users\ben.changdar\source\repos\AshesiMIS\frmViewGrades.h(724,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'frmMain.cpp')
+  
+  frmViewGrades.cpp
+C:\Users\ben.changdar\source\repos\AshesiMIS\frmViewGrades.h(724,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'frmViewGrades.cpp')
+  
+  mainProgram.cpp
+C:\Users\ben.changdar\source\repos\AshesiMIS\frmViewGrades.h(724,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'mainProgram.cpp')
+  
+  newFrmLogin.cpp
+C:\Users\ben.changdar\source\repos\AshesiMIS\frmViewGrades.h(724,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'newFrmLogin.cpp')
+  
+  Generating Code...
+  frmAddFaculty.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
+  AshesiMIS.vcxproj -> C:\Users\ben.changdar\source\repos\AshesiMIS\x64\Debug\AshesiMIS.exe

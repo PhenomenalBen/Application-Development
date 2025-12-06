@@ -1,0 +1,761 @@
+#pragma once
+
+namespace AshesiMIS {
+
+	using namespace System;
+	using namespace System::ComponentModel;
+	using namespace System::Collections;
+	using namespace System::Windows::Forms;
+	using namespace System::Data;
+	using namespace System::Drawing;
+	using namespace System::Drawing::Printing;
+	using namespace MySql::Data::MySqlClient;
+
+	/// <summary>
+	/// Summary for frmViewGrades
+	/// </summary>
+	public ref class frmViewGrades : public System::Windows::Forms::Form
+	{
+	public:
+		frmViewGrades(int studentID)
+		{
+			InitializeComponent();
+			currentStudentID = studentID;
+			LoadStudentInfo();
+			LoadFilters();
+			LoadAllGrades();
+		}
+		MySqlConnection^ sqlConn = gcnew MySqlConnection();
+		MySqlCommand^ sqlCmd = gcnew MySqlCommand();
+		MySqlDataAdapter^ sqlDA = gcnew MySqlDataAdapter();
+		MySqlDataReader^ sqlDR;
+		DataTable^ sqlDT = gcnew DataTable();
+		String^ ConnectionStr = "server=localhost;port=4306;uid=root;pwd=;database=ahsesimis;";
+		int currentStudentID = 0;
+
+		// Print variables
+		PrintDocument^ printDoc;
+		int currentPrintRow;
+		String^ studentInfo;
+		String^ cgpaText;
+		String^ sgpaText;
+		String^ totalCoursesText;
+		String^ totalCreditsText;
+
+	protected:
+		~frmViewGrades()
+		{
+			if (components)
+			{
+				delete components;
+			}
+		}
+	private: System::Windows::Forms::Label^ label1;
+	private: System::Windows::Forms::Label^ lblStudentInfo;
+	private: System::Windows::Forms::Label^ label3;
+	private: System::Windows::Forms::Label^ label4;
+	private: System::Windows::Forms::ComboBox^ cmbSemester;
+	private: System::Windows::Forms::ComboBox^ cmbAcademicYear;
+	private: System::Windows::Forms::Button^ btnViewAll;
+	private: System::Windows::Forms::Button^ btnFilter;
+	private: System::Windows::Forms::DataGridView^ dgvGrades;
+	private: System::Windows::Forms::Button^ btnClose;
+	private: System::Windows::Forms::Button^ btnPrint;
+	private: System::Windows::Forms::Label^ lblSGPA;
+	private: System::Windows::Forms::Label^ lblCGPA;
+	private: System::Windows::Forms::GroupBox^ groupBox1;
+	private: System::Windows::Forms::ProgressBar^ pbGradeDistribution;
+	private: System::Windows::Forms::Label^ lblTotalCourses;
+	private: System::Windows::Forms::Label^ lblTotalCredits;
+
+	private:
+		System::ComponentModel::Container^ components;
+
+#pragma region Windows Form Designer generated code
+		void InitializeComponent(void)
+		{
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->lblStudentInfo = (gcnew System::Windows::Forms::Label());
+			this->label3 = (gcnew System::Windows::Forms::Label());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->cmbSemester = (gcnew System::Windows::Forms::ComboBox());
+			this->cmbAcademicYear = (gcnew System::Windows::Forms::ComboBox());
+			this->btnViewAll = (gcnew System::Windows::Forms::Button());
+			this->btnFilter = (gcnew System::Windows::Forms::Button());
+			this->dgvGrades = (gcnew System::Windows::Forms::DataGridView());
+			this->btnClose = (gcnew System::Windows::Forms::Button());
+			this->btnPrint = (gcnew System::Windows::Forms::Button());
+			this->lblSGPA = (gcnew System::Windows::Forms::Label());
+			this->lblCGPA = (gcnew System::Windows::Forms::Label());
+			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->lblTotalCredits = (gcnew System::Windows::Forms::Label());
+			this->pbGradeDistribution = (gcnew System::Windows::Forms::ProgressBar());
+			this->lblTotalCourses = (gcnew System::Windows::Forms::Label());
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dgvGrades))->BeginInit();
+			this->groupBox1->SuspendLayout();
+			this->SuspendLayout();
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label1->Location = System::Drawing::Point(330, 9);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(138, 29);
+			this->label1->TabIndex = 0;
+			this->label1->Text = L"My Grades";
+			// 
+			// lblStudentInfo
+			// 
+			this->lblStudentInfo->AutoSize = true;
+			this->lblStudentInfo->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->lblStudentInfo->Location = System::Drawing::Point(32, 42);
+			this->lblStudentInfo->Name = L"lblStudentInfo";
+			this->lblStudentInfo->Size = System::Drawing::Size(136, 25);
+			this->lblStudentInfo->TabIndex = 1;
+			this->lblStudentInfo->Text = L"Student Info:";
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label3->Location = System::Drawing::Point(31, 80);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(196, 25);
+			this->label3->TabIndex = 2;
+			this->label3->Text = L"Filter By Semester:";
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label4->Location = System::Drawing::Point(31, 118);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(250, 25);
+			this->label4->TabIndex = 3;
+			this->label4->Text = L"Filter By Academic Year:";
+			// 
+			// cmbSemester
+			// 
+			this->cmbSemester->FormattingEnabled = true;
+			this->cmbSemester->Location = System::Drawing::Point(267, 81);
+			this->cmbSemester->Name = L"cmbSemester";
+			this->cmbSemester->Size = System::Drawing::Size(314, 24);
+			this->cmbSemester->TabIndex = 4;
+			// 
+			// cmbAcademicYear
+			// 
+			this->cmbAcademicYear->FormattingEnabled = true;
+			this->cmbAcademicYear->Location = System::Drawing::Point(315, 119);
+			this->cmbAcademicYear->Name = L"cmbAcademicYear";
+			this->cmbAcademicYear->Size = System::Drawing::Size(175, 24);
+			this->cmbAcademicYear->TabIndex = 5;
+			// 
+			// btnViewAll
+			// 
+			this->btnViewAll->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->btnViewAll->Location = System::Drawing::Point(36, 162);
+			this->btnViewAll->Name = L"btnViewAll";
+			this->btnViewAll->Size = System::Drawing::Size(175, 41);
+			this->btnViewAll->TabIndex = 6;
+			this->btnViewAll->Text = L"View All Grades";
+			this->btnViewAll->UseVisualStyleBackColor = true;
+			this->btnViewAll->Click += gcnew System::EventHandler(this, &frmViewGrades::btnViewAll_Click);
+			// 
+			// btnFilter
+			// 
+			this->btnFilter->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->btnFilter->Location = System::Drawing::Point(248, 162);
+			this->btnFilter->Name = L"btnFilter";
+			this->btnFilter->Size = System::Drawing::Size(91, 34);
+			this->btnFilter->TabIndex = 7;
+			this->btnFilter->Text = L"Filter";
+			this->btnFilter->UseVisualStyleBackColor = true;
+			this->btnFilter->Click += gcnew System::EventHandler(this, &frmViewGrades::btnFilter_Click);
+			// 
+			// dgvGrades
+			// 
+			this->dgvGrades->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
+			this->dgvGrades->Location = System::Drawing::Point(36, 209);
+			this->dgvGrades->Name = L"dgvGrades";
+			this->dgvGrades->RowHeadersWidth = 51;
+			this->dgvGrades->RowTemplate->Height = 24;
+			this->dgvGrades->Size = System::Drawing::Size(1061, 182);
+			this->dgvGrades->TabIndex = 8;
+			// 
+			// btnClose
+			// 
+			this->btnClose->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->btnClose->Location = System::Drawing::Point(987, 531);
+			this->btnClose->Name = L"btnClose";
+			this->btnClose->Size = System::Drawing::Size(110, 33);
+			this->btnClose->TabIndex = 9;
+			this->btnClose->Text = L"Close";
+			this->btnClose->UseVisualStyleBackColor = true;
+			this->btnClose->Click += gcnew System::EventHandler(this, &frmViewGrades::btnClose_Click);
+			// 
+			// btnPrint
+			// 
+			this->btnPrint->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->btnPrint->Location = System::Drawing::Point(758, 531);
+			this->btnPrint->Name = L"btnPrint";
+			this->btnPrint->Size = System::Drawing::Size(181, 33);
+			this->btnPrint->TabIndex = 10;
+			this->btnPrint->Text = L"Print Transcript";
+			this->btnPrint->UseVisualStyleBackColor = true;
+			this->btnPrint->Click += gcnew System::EventHandler(this, &frmViewGrades::btnPrint_Click);
+			// 
+			// lblSGPA
+			// 
+			this->lblSGPA->AutoSize = true;
+			this->lblSGPA->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->lblSGPA->Location = System::Drawing::Point(382, 419);
+			this->lblSGPA->Name = L"lblSGPA";
+			this->lblSGPA->Size = System::Drawing::Size(147, 22);
+			this->lblSGPA->TabIndex = 11;
+			this->lblSGPA->Text = L"Semester GPA:";
+			// 
+			// lblCGPA
+			// 
+			this->lblCGPA->AutoSize = true;
+			this->lblCGPA->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->lblCGPA->Location = System::Drawing::Point(32, 419);
+			this->lblCGPA->Name = L"lblCGPA";
+			this->lblCGPA->Size = System::Drawing::Size(162, 22);
+			this->lblCGPA->TabIndex = 12;
+			this->lblCGPA->Text = L"Cumulative GPA:";
+			// 
+			// groupBox1
+			// 
+			this->groupBox1->BackColor = System::Drawing::Color::Cyan;
+			this->groupBox1->Controls->Add(this->lblTotalCredits);
+			this->groupBox1->Controls->Add(this->pbGradeDistribution);
+			this->groupBox1->Controls->Add(this->lblTotalCourses);
+			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->groupBox1->Location = System::Drawing::Point(36, 453);
+			this->groupBox1->Name = L"groupBox1";
+			this->groupBox1->Size = System::Drawing::Size(640, 120);
+			this->groupBox1->TabIndex = 13;
+			this->groupBox1->TabStop = false;
+			this->groupBox1->Text = L"Grade Summary";
+			// 
+			// lblTotalCredits
+			// 
+			this->lblTotalCredits->AutoSize = true;
+			this->lblTotalCredits->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->lblTotalCredits->Location = System::Drawing::Point(237, 68);
+			this->lblTotalCredits->Name = L"lblTotalCredits";
+			this->lblTotalCredits->Size = System::Drawing::Size(126, 22);
+			this->lblTotalCredits->TabIndex = 15;
+			this->lblTotalCredits->Text = L"Total Credits";
+			// 
+			// pbGradeDistribution
+			// 
+			this->pbGradeDistribution->BackColor = System::Drawing::Color::Chartreuse;
+			this->pbGradeDistribution->ForeColor = System::Drawing::SystemColors::Desktop;
+			this->pbGradeDistribution->Location = System::Drawing::Point(54, 33);
+			this->pbGradeDistribution->Name = L"pbGradeDistribution";
+			this->pbGradeDistribution->Size = System::Drawing::Size(100, 23);
+			this->pbGradeDistribution->TabIndex = 0;
+			// 
+			// lblTotalCourses
+			// 
+			this->lblTotalCourses->AutoSize = true;
+			this->lblTotalCourses->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->lblTotalCourses->Location = System::Drawing::Point(237, 23);
+			this->lblTotalCourses->Name = L"lblTotalCourses";
+			this->lblTotalCourses->Size = System::Drawing::Size(136, 22);
+			this->lblTotalCourses->TabIndex = 14;
+			this->lblTotalCourses->Text = L"Total Courses";
+			// 
+			// frmViewGrades
+			// 
+			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
+			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->BackColor = System::Drawing::Color::Gold;
+			this->ClientSize = System::Drawing::Size(1158, 624);
+			this->Controls->Add(this->groupBox1);
+			this->Controls->Add(this->lblCGPA);
+			this->Controls->Add(this->lblSGPA);
+			this->Controls->Add(this->btnPrint);
+			this->Controls->Add(this->btnClose);
+			this->Controls->Add(this->dgvGrades);
+			this->Controls->Add(this->btnFilter);
+			this->Controls->Add(this->btnViewAll);
+			this->Controls->Add(this->cmbAcademicYear);
+			this->Controls->Add(this->cmbSemester);
+			this->Controls->Add(this->label4);
+			this->Controls->Add(this->label3);
+			this->Controls->Add(this->lblStudentInfo);
+			this->Controls->Add(this->label1);
+			this->Name = L"frmViewGrades";
+			this->Text = L"View Your Grades";
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dgvGrades))->EndInit();
+			this->groupBox1->ResumeLayout(false);
+			this->groupBox1->PerformLayout();
+			this->ResumeLayout(false);
+			this->PerformLayout();
+
+		}
+#pragma endregion
+
+	private:
+		void LoadStudentInfo() {
+			try {
+				sqlConn->ConnectionString = ConnectionStr;
+				sqlConn->Open();
+				sqlCmd->Connection = sqlConn;
+				sqlCmd->CommandText = "SELECT s.StudentID, u.FirstName, u.LastName, p.Programme, s.Level " +
+					"FROM students s " +
+					"INNER JOIN users u ON s.UserID = u.ID " +
+					"INNER JOIN programmes p ON s.ProgrammeID = p.ID " +
+					"WHERE s.ID = @id";
+				sqlCmd->Parameters->Clear();
+				sqlCmd->Parameters->AddWithValue("@id", currentStudentID);
+				sqlDR = sqlCmd->ExecuteReader();
+
+				if (sqlDR->Read()) {
+					lblStudentInfo->Text = "Student: " + sqlDR["StudentID"]->ToString() + " - " +
+						sqlDR["FirstName"]->ToString() + " " + sqlDR["LastName"]->ToString() +
+						" | Programme: " + sqlDR["Programme"]->ToString() +
+						" | Level: " + sqlDR["Level"]->ToString();
+				}
+				sqlDR->Close();
+				sqlConn->Close();
+			}
+			catch (Exception^ ex) {
+				MessageBox::Show("Error loading student info: " + ex->Message, "Error",
+					MessageBoxButtons::OK, MessageBoxIcon::Error);
+			}
+		}
+
+		void LoadFilters() {
+			cmbSemester->Items->Clear();
+			cmbSemester->Items->Add("All");
+			cmbSemester->Items->Add("First Semester");
+			cmbSemester->Items->Add("Second Semester");
+			cmbSemester->Items->Add("Summer Session");
+			cmbSemester->SelectedIndex = 0;
+
+			try {
+				if (sqlConn->State == ConnectionState::Open) sqlConn->Close();
+				sqlConn->ConnectionString = ConnectionStr;
+				sqlConn->Open();
+				MySqlDataAdapter^ da = gcnew MySqlDataAdapter(
+					"SELECT DISTINCT AcademicYear FROM grades WHERE StudentID = @id ORDER BY AcademicYear DESC", sqlConn);
+				da->SelectCommand->Parameters->AddWithValue("@id", currentStudentID);
+				DataTable^ dt = gcnew DataTable();
+				da->Fill(dt);
+
+				cmbAcademicYear->Items->Clear();
+				cmbAcademicYear->Items->Add("All");
+				for each(DataRow ^ row in dt->Rows) {
+					cmbAcademicYear->Items->Add(row["AcademicYear"]->ToString());
+				}
+				cmbAcademicYear->SelectedIndex = 0;
+				sqlConn->Close();
+			}
+			catch (Exception^ ex) {
+				MessageBox::Show("Error loading filters: " + ex->Message, "Error",
+					MessageBoxButtons::OK, MessageBoxIcon::Error);
+			}
+		}
+
+		void LoadAllGrades() {
+			LoadGrades("", "");
+		}
+
+		void LoadGrades(String^ semester, String^ academicYear) {
+			try {
+				if (sqlConn->State == ConnectionState::Open) sqlConn->Close();
+				sqlConn->ConnectionString = ConnectionStr;
+				sqlConn->Open();
+
+				String^ query = "SELECT g.ID, c.CourseCode, c.CourseTitle, c.CourseCredit as Credits, " +
+					"g.Grade, g.GradePoints, g.Semester, g.AcademicYear " +
+					"FROM grades g " +
+					"INNER JOIN courses c ON g.CourseID = c.ID " +
+					"WHERE g.StudentID = @id";
+
+				if (semester != "" && semester != "All") {
+					query += " AND g.Semester = @sem";
+				}
+				if (academicYear != "" && academicYear != "All") {
+					query += " AND g.AcademicYear = @year";
+				}
+				query += " ORDER BY g.AcademicYear DESC, g.Semester";
+
+				MySqlDataAdapter^ da = gcnew MySqlDataAdapter(query, sqlConn);
+				da->SelectCommand->Parameters->AddWithValue("@id", currentStudentID);
+				if (semester != "" && semester != "All") {
+					da->SelectCommand->Parameters->AddWithValue("@sem", semester);
+				}
+				if (academicYear != "" && academicYear != "All") {
+					da->SelectCommand->Parameters->AddWithValue("@year", academicYear);
+				}
+
+				sqlDT->Clear();
+				da->Fill(sqlDT);
+				dgvGrades->DataSource = sqlDT;
+				dgvGrades->SelectionMode = DataGridViewSelectionMode::FullRowSelect;
+				sqlConn->Close();
+
+				CalculateGPA();
+				UpdateSummary();
+			}
+			catch (Exception^ ex) {
+				MessageBox::Show("Error loading grades: " + ex->Message, "Error",
+					MessageBoxButtons::OK, MessageBoxIcon::Error);
+			}
+		}
+
+		void CalculateGPA() {
+			try {
+				if (sqlConn->State == ConnectionState::Open) sqlConn->Close();
+				sqlConn->ConnectionString = ConnectionStr;
+				sqlConn->Open();
+				sqlCmd->Connection = sqlConn;
+
+				sqlCmd->CommandText = "SELECT SUM(g.GradePoints * c.CourseCredit) / SUM(c.CourseCredit) as CGPA " +
+					"FROM grades g INNER JOIN courses c ON g.CourseID = c.ID " +
+					"WHERE g.StudentID = @id";
+				sqlCmd->Parameters->Clear();
+				sqlCmd->Parameters->AddWithValue("@id", currentStudentID);
+				Object^ cgpaObj = sqlCmd->ExecuteScalar();
+				double cgpa = (cgpaObj != nullptr && cgpaObj != DBNull::Value) ? Convert::ToDouble(cgpaObj) : 0.0;
+				lblCGPA->Text = "Cumulative GPA: " + cgpa.ToString("0.00");
+
+				String^ semester = cmbSemester->Text;
+				String^ year = cmbAcademicYear->Text;
+
+				if (semester != "All" && year != "All") {
+					sqlCmd->CommandText = "SELECT SUM(g.GradePoints * c.CourseCredit) / SUM(c.CourseCredit) as SGPA " +
+						"FROM grades g INNER JOIN courses c ON g.CourseID = c.ID " +
+						"WHERE g.StudentID = @id AND g.Semester = @sem AND g.AcademicYear = @year";
+					sqlCmd->Parameters->Clear();
+					sqlCmd->Parameters->AddWithValue("@id", currentStudentID);
+					sqlCmd->Parameters->AddWithValue("@sem", semester);
+					sqlCmd->Parameters->AddWithValue("@year", year);
+					Object^ sgpaObj = sqlCmd->ExecuteScalar();
+					double sgpa = (sgpaObj != nullptr && sgpaObj != DBNull::Value) ? Convert::ToDouble(sgpaObj) : 0.0;
+					lblSGPA->Text = "Semester GPA: " + sgpa.ToString("0.00");
+				}
+				else {
+					lblSGPA->Text = "Semester GPA: N/A (Select specific semester)";
+				}
+
+				sqlConn->Close();
+			}
+			catch (Exception^ ex) {
+				MessageBox::Show("Error calculating GPA: " + ex->Message, "Error",
+					MessageBoxButtons::OK, MessageBoxIcon::Error);
+			}
+		}
+
+		void UpdateSummary() {
+			try {
+				if (sqlConn->State == ConnectionState::Open) sqlConn->Close();
+				sqlConn->ConnectionString = ConnectionStr;
+				sqlConn->Open();
+				sqlCmd->Connection = sqlConn;
+
+				sqlCmd->CommandText = "SELECT COUNT(*) FROM grades WHERE StudentID = @id";
+				sqlCmd->Parameters->Clear();
+				sqlCmd->Parameters->AddWithValue("@id", currentStudentID);
+				int totalCourses = Convert::ToInt32(sqlCmd->ExecuteScalar());
+				lblTotalCourses->Text = "Total Courses: " + totalCourses.ToString();
+
+				sqlCmd->CommandText = "SELECT SUM(c.CourseCredit) FROM grades g " +
+					"INNER JOIN courses c ON g.CourseID = c.ID WHERE g.StudentID = @id";
+				sqlCmd->Parameters->Clear();
+				sqlCmd->Parameters->AddWithValue("@id", currentStudentID);
+				Object^ creditsObj = sqlCmd->ExecuteScalar();
+				int totalCredits = (creditsObj != nullptr && creditsObj != DBNull::Value) ? Convert::ToInt32(creditsObj) : 0;
+				lblTotalCredits->Text = "Total Credits: " + totalCredits.ToString();
+
+				sqlConn->Close();
+			}
+			catch (Exception^ ex) {
+				MessageBox::Show("Error updating summary: " + ex->Message, "Error",
+					MessageBoxButtons::OK, MessageBoxIcon::Error);
+			}
+		}
+
+		System::Void btnViewAll_Click(System::Object^ sender, System::EventArgs^ e) {
+			cmbSemester->SelectedIndex = 0;
+			cmbAcademicYear->SelectedIndex = 0;
+			LoadAllGrades();
+		}
+
+		System::Void btnFilter_Click(System::Object^ sender, System::EventArgs^ e) {
+			String^ semester = cmbSemester->Text;
+			String^ year = cmbAcademicYear->Text;
+			LoadGrades(semester, year);
+		}
+
+		System::Void btnPrint_Click(System::Object^ sender, System::EventArgs^ e) {
+			try {
+				// Store current data for printing
+				studentInfo = lblStudentInfo->Text;
+				cgpaText = lblCGPA->Text;
+				sgpaText = lblSGPA->Text;
+				totalCoursesText = lblTotalCourses->Text;
+				totalCreditsText = lblTotalCredits->Text;
+				currentPrintRow = 0;
+
+				// Create and configure print document
+				printDoc = gcnew PrintDocument();
+				printDoc->PrintPage += gcnew PrintPageEventHandler(this, &frmViewGrades::PrintDocument_PrintPage);
+
+				// Show print preview dialog
+				PrintPreviewDialog^ previewDialog = gcnew PrintPreviewDialog();
+				previewDialog->Document = printDoc;
+				previewDialog->Width = 800;
+				previewDialog->Height = 600;
+
+				if (previewDialog->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+					// Show print dialog
+					PrintDialog^ printDialog = gcnew PrintDialog();
+					printDialog->Document = printDoc;
+
+					if (printDialog->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+						printDoc->Print();
+					}
+				}
+			}
+			catch (Exception^ ex) {
+				MessageBox::Show("Error printing transcript: " + ex->Message, "Error",
+					MessageBoxButtons::OK, MessageBoxIcon::Error);
+			}
+		}
+
+		void PrintDocument_PrintPage(Object^ sender, PrintPageEventArgs^ e) {
+			try {
+				Graphics^ g = e->Graphics;
+
+				// Define fonts
+				System::Drawing::Font^ titleFont = gcnew System::Drawing::Font("Arial", 18, FontStyle::Bold);
+				System::Drawing::Font^ subtitleFont = gcnew System::Drawing::Font("Arial", 14, FontStyle::Bold);
+				System::Drawing::Font^ headerFont = gcnew System::Drawing::Font("Arial", 11, FontStyle::Bold);
+				System::Drawing::Font^ normalFont = gcnew System::Drawing::Font("Arial", 10);
+				System::Drawing::Font^ smallFont = gcnew System::Drawing::Font("Arial", 9);
+
+				// Define brushes and pens
+				SolidBrush^ blackBrush = gcnew SolidBrush(Color::Black);
+				SolidBrush^ grayBrush = gcnew SolidBrush(Color::Gray);
+				SolidBrush^ headerBrush = gcnew SolidBrush(Color::FromArgb(41, 128, 185));
+				Pen^ blackPen = gcnew Pen(Color::Black, 2.0f);
+				Pen^ thinPen = gcnew Pen(Color::Gray, 1.0f);
+
+				// Page margins
+				float leftMargin = 50.0f;
+				float topMargin = 50.0f;
+				float rightMargin = e->PageBounds.Width - 50.0f;
+				float yPos = topMargin;
+
+				// Draw header box
+				RectangleF headerBox = RectangleF(leftMargin, yPos, rightMargin - leftMargin, 100.0f);
+				g->FillRectangle(gcnew SolidBrush(Color::FromArgb(240, 240, 240)), headerBox);
+				g->DrawRectangle(blackPen, leftMargin, yPos, rightMargin - leftMargin, 100.0f);
+
+				// Draw university logo/name
+				yPos += 15;
+				String^ universityName = "ASHESI UNIVERSITY";
+				SizeF titleSize = g->MeasureString(universityName, titleFont);
+				float centerX = (leftMargin + rightMargin) / 2 - titleSize.Width / 2;
+				g->DrawString(universityName, titleFont, headerBrush, centerX, yPos);
+
+				yPos += 30;
+				String^ docTitle = "OFFICIAL ACADEMIC TRANSCRIPT";
+				SizeF subtitleSize = g->MeasureString(docTitle, subtitleFont);
+				centerX = (leftMargin + rightMargin) / 2 - subtitleSize.Width / 2;
+				g->DrawString(docTitle, subtitleFont, blackBrush, centerX, yPos);
+
+				yPos += 35;
+				DateTime currentDate = DateTime::Now;
+				String^ dateStr = "Date: " + currentDate.ToString("MMMM dd, yyyy");
+				g->DrawString(dateStr, smallFont, grayBrush, rightMargin - 150, yPos);
+
+				yPos += 40;
+
+				// Draw student information section
+				g->DrawString("STUDENT INFORMATION", headerFont, headerBrush, leftMargin, yPos);
+				yPos += 25;
+				g->DrawLine(thinPen, leftMargin, yPos, rightMargin, yPos);
+				yPos += 15;
+
+				// Parse and draw student info
+				g->DrawString(studentInfo, normalFont, blackBrush, leftMargin, yPos);
+				yPos += 40;
+
+				// Draw GPA section
+				g->DrawString("ACADEMIC PERFORMANCE", headerFont, headerBrush, leftMargin, yPos);
+				yPos += 25;
+				g->DrawLine(thinPen, leftMargin, yPos, rightMargin, yPos);
+				yPos += 15;
+
+				g->DrawString(cgpaText, normalFont, blackBrush, leftMargin, yPos);
+				g->DrawString(sgpaText, normalFont, blackBrush, leftMargin + 250, yPos);
+				yPos += 30;
+
+				g->DrawString(totalCoursesText, normalFont, blackBrush, leftMargin, yPos);
+				g->DrawString(totalCreditsText, normalFont, blackBrush, leftMargin + 250, yPos);
+				yPos += 40;
+
+				// Draw grades table
+				g->DrawString("COURSE GRADES", headerFont, headerBrush, leftMargin, yPos);
+				yPos += 25;
+				g->DrawLine(thinPen, leftMargin, yPos, rightMargin, yPos);
+				yPos += 15;
+
+				// Table headers
+				array<String^>^ headers = gcnew array<String^>{ "Course Code", "Course Title", "Credits", "Grade", "Points", "Semester", "Year" };
+				array<float>^ columnWidths = gcnew array<float>{ 85.0f, 170.0f, 55.0f, 50.0f, 50.0f, 110.0f, 80.0f };
+
+				float tableWidth = 0;
+				for (int i = 0; i < columnWidths->Length; i++) {
+					tableWidth += columnWidths[i];
+				}
+
+				// Draw header row
+				RectangleF headerRowRect = RectangleF(leftMargin, yPos, tableWidth, 25.0f);
+				g->FillRectangle(gcnew SolidBrush(Color::FromArgb(220, 220, 220)), headerRowRect);
+				g->DrawRectangle(thinPen, leftMargin, yPos, tableWidth, 25.0f);
+
+				float xPos = leftMargin;
+				for (int i = 0; i < headers->Length; i++) {
+					// Center align header text within column
+					SizeF headerSize = g->MeasureString(headers[i], headerFont);
+					float headerX = xPos + (columnWidths[i] - headerSize.Width) / 2;
+					g->DrawString(headers[i], headerFont, blackBrush, headerX, yPos + 5);
+					if (i < headers->Length - 1) {
+						g->DrawLine(thinPen, xPos + columnWidths[i], yPos, xPos + columnWidths[i], yPos + 25);
+					}
+					xPos += columnWidths[i];
+				}
+				yPos += 25;
+
+				// Draw data rows
+				int rowCount = 0;
+				for (int i = currentPrintRow; i < dgvGrades->Rows->Count; i++) {
+					if (dgvGrades->Rows[i]->IsNewRow) continue;
+
+					// Check if we need a new page
+					if (yPos > e->PageBounds.Height - 100) {
+						currentPrintRow = i;
+						e->HasMorePages = true;
+
+						// Clean up resources
+						delete titleFont;
+						delete subtitleFont;
+						delete headerFont;
+						delete normalFont;
+						delete smallFont;
+						delete blackBrush;
+						delete grayBrush;
+						delete headerBrush;
+						delete blackPen;
+						delete thinPen;
+
+						return;
+					}
+
+					// Draw row background (alternate colors)
+					Color rowColor = (rowCount % 2 == 0) ? Color::White : Color::FromArgb(245, 245, 245);
+					g->FillRectangle(gcnew SolidBrush(rowColor), leftMargin, yPos, tableWidth, 25.0f);
+					g->DrawRectangle(thinPen, leftMargin, yPos, tableWidth, 25.0f);
+
+					xPos = leftMargin;
+					array<String^>^ columnNames = gcnew array<String^>{ "CourseCode", "CourseTitle", "Credits", "Grade", "GradePoints", "Semester", "AcademicYear" };
+
+					for (int j = 0; j < columnNames->Length; j++) {
+						String^ value = "";
+						if (dgvGrades->Rows[i]->Cells[columnNames[j]]->Value != nullptr) {
+							value = dgvGrades->Rows[i]->Cells[columnNames[j]]->Value->ToString();
+						}
+
+						// Truncate long course titles to fit within column
+						if (j == 1 && value->Length > 22) {
+							value = value->Substring(0, 19) + "...";
+						}
+
+						// Create a clipping region to prevent text overflow
+						RectangleF cellRect = RectangleF(xPos + 3, yPos + 3, columnWidths[j] - 6, 19.0f);
+						System::Drawing::Region^ oldClip = g->Clip;
+						g->SetClip(cellRect);
+
+						// Center align numeric columns (Credits, Grade, Points)
+						if (j == 2 || j == 3 || j == 4) {
+							SizeF textSize = g->MeasureString(value, normalFont);
+							float centeredX = xPos + (columnWidths[j] - textSize.Width) / 2;
+							g->DrawString(value, normalFont, blackBrush, centeredX, yPos + 5);
+						}
+						else {
+							g->DrawString(value, normalFont, blackBrush, xPos + 5, yPos + 5);
+						}
+
+						// Restore original clipping region
+						g->Clip = oldClip;
+
+						if (j < columnNames->Length - 1) {
+							g->DrawLine(thinPen, xPos + columnWidths[j], yPos, xPos + columnWidths[j], yPos + 25);
+						}
+						xPos += columnWidths[j];
+					}
+
+					yPos += 25;
+					rowCount++;
+				}
+
+				// Draw footer
+				yPos = e->PageBounds.Height - 80;
+				g->DrawLine(blackPen, leftMargin, yPos, rightMargin, yPos);
+				yPos += 15;
+
+				String^ footer = "This is an official transcript generated by Ashesi University Management Information System";
+				g->DrawString(footer, smallFont, grayBrush, leftMargin, yPos);
+				yPos += 20;
+
+				String^ pageNum = "Page " + (currentPrintRow / 20 + 1).ToString();
+				SizeF pageNumSize = g->MeasureString(pageNum, smallFont);
+				g->DrawString(pageNum, smallFont, grayBrush, rightMargin - pageNumSize.Width, yPos);
+
+				// No more pages
+				e->HasMorePages = false;
+
+				// Clean up resources
+				delete titleFont;
+				delete subtitleFont;
+				delete headerFont;
+				delete normalFont;
+				delete smallFont;
+				delete blackBrush;
+				delete grayBrush;
+				delete headerBrush;
+				delete blackPen;
+				delete thinPen;
+			}
+			catch (Exception^ ex) {
+				MessageBox::Show("Error during printing: " + ex->Message, "Print Error",
+					MessageBoxButtons::OK, MessageBoxIcon::Error);
+			}
+		}
+
+		System::Void btnClose_Click(System::Object^ sender, System::EventArgs^ e) {
+			this->Close();
+		}
+	};
+}
